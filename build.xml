@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Default build.xml file for JavaWeb Project
+  ==========================================
+  @depend ant-1.9.2+ (tested, actually more below this)
+  @author "galin"<cuter44@qq.com>
+  @version 1.3.1 build 2014/2/15
+  ==========================================
+  You can do whatever to this file as you wish.
+  This file and other attachement is provided as-if, and no warranty.
+  ==========================================
+  [USAGE]
+  Config your project-name right below, then parse it to your project-base. use 'ant -projecthelp' to view all commands.
+-->
+<project name="paperfly" basedir="." default="build-all" >
+
+  <!-- 变量 -->
+  <property name="srcdir" value="src" />
+  <property name="dtlibdir" value="lib" />
+  <property name="webdir" value="web" />
+  <property name="javadocdir" value="javadoc" />
+  <property name="webinfdir" value="${webdir}/WEB-INF" />
+  <property name="rtlibdir" value="${webinfdir}/lib" />
+  <property name="destdir" value="${webinfdir}/classes" />
+  <property name="version" value="0.1.0" />
+
+  <path id="classpath">
+    <fileset id="rt-packages" dir="${rtlibdir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset id="dt-packages" dir="${dtlibdir}">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement path="${destdir}" />
+  </path>
+
+  <!-- 初始化目录树 -->
+  <target name="init" description="初始化目录树及默认配置文件, 注意会覆盖 web.xml">
+    <mkdir dir="${srcdir}" />
+    <mkdir dir="${dtlibdir}" />
+    <mkdir dir="${rtlibdir}" />
+    <mkdir dir="${destdir}" />
+    <antcall target="init-genwebxml" />
+    <antcall target="init-gendeploy" />
+  </target>
+
+  <target name="init-genwebxml" description="初始化默认的 web.xml">
+    <echo file="${webinfdir}/web.xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:web="http://java.sun.com/xml/ns/javaee"
+        xmlns="http://java.sun.com/xml/ns/javaee"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0"&gt;
+  &lt;display-name&gt;${ant.project.name}&lt;/display-name&gt;
+
+  &lt;!--
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+  --&gt;
+
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.htm&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
+    </echo>
+  </target>
+
+  <target name="init-gendeploy" description="生成指向配置文件, 用于 tomcat 的引用部署">
+    <echo file="${ant.project.name}.xml">&lt;!-- note: copy this file to your ANT_HOME/conf/Catalina/localhost(or other as your actual) to deploy --&gt;
+&lt;Context docBase="${basedir}\${webdir}"&gt;
+&lt;/Context&gt;
+    </echo>
+  </target>
+
+  <!-- 编译 -->
+  <target name="build" description="编译">
+    <mkdir dir="${destdir}" />
+    <antcall target="copy-config" />
+    <javac srcdir="${srcdir}/java" destdir="${destdir}" failonerror="true" debug="true" includeantruntime="false" encoding="utf-8" >
+      <compilerarg value="-Xlint:unchecked" />
+      <compilerarg value="-Xlint:deprecation" />
+      <classpath refid="classpath" />
+    </javac>
+  </target>
+
+  <target name="clear-built" description="清理">
+    <delete>
+      <fileset dir="${destdir}" includes="**/*"/>
+    </delete>
+  </target>
+
+  <target name="build-all" description="全部重新编译">
+    <antcall target="clear-built" />
+    <antcall target="build" />
+  </target>
+
+  <target name="copy-config" description="复制配置文件">
+    <copy todir="${destdir}">
+      <fileset dir="${srcdir}/java">
+        <include name="**/*.xml" />
+        <include name="**/*.properties" />
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- 生成javadoc -->
+  <target name="javadoc" description="生成javadoc">
+    <javadoc sourcepath="${srcdir}" destdir="${javadocdir}" private="true" classpathref="classpath"/>
+  </target>
+
+  <!-- 生成war -->
+  <target name="war" description="生成war">
+    <antcall target="build-all"/>
+    <jar destfile="${ant.project.name}.war" basedir="${webdir}" />
+  </target>
+
+  <!-- 调试 -->
+  <target name="debug" description="本地测试, 使用-Ddebug.main=&lt;类名&gt;指定jvm的入口类">
+    <java classname="${debug.main}" fork="true" dir="${destdir}">
+      <!-- 启用断言 -->
+      <jvmarg value="-ea" />
+      <!-- 启用调试 -->
+      <jvmarg value="-Xdebug"/> 
+      <!-- 启用远程调试 -->
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8288,suspend=y,server=y"/>
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
+  <!-- 运行 -->
+  <target name="run" description="直接运行, 使用-Drun.main=&lt;类名&gt;指定入口类">
+    <java classname="${run.main}" fork="true" dir="${destdir}">
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
+  <!-- 工具集 -->
+
+</project>
