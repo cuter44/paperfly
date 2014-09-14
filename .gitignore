@@ -5,5 +5,6 @@ paperfly.xml
 
 paperfly-*.jar
 
+javadoc
 web/WEB-INF/classes/*
 

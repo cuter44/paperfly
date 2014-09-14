@@ -22,7 +22,7 @@
   <property name="webinfdir" value="${webdir}/WEB-INF" />
   <property name="rtlibdir" value="${webinfdir}/lib" />
   <property name="destdir" value="${webinfdir}/classes" />
-  <property name="version" value="0.1.0" />
+  <property name="version" value="1.0.0" />
 
   <path id="classpath">
     <fileset id="rt-packages" dir="${rtlibdir}">
