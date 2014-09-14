@@ -1,0 +1,11 @@
+com.github.cuter44.paperfly
+com.github.cuter44.paperfly.msg
+com.github.cuter44.paperfly.msg.core
+com.github.cuter44.paperfly.msg.dao
+com.github.cuter44.paperfly.msg.servlet
+com.github.cuter44.util
+com.github.cuter44.util.crypto
+com.github.cuter44.util.dao
+com.github.cuter44.util.dump
+com.github.cuter44.util.servlet
+com.github.cuter44.util.text

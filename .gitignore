@@ -1,0 +1,9 @@
+# gitignore by galin
+# 2014/7/25
+
+paperfly.xml
+
+paperfly-*.jar
+
+web/WEB-INF/classes/*
+
