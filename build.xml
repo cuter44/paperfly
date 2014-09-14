@@ -84,7 +84,7 @@
   <target name="build" description="编译">
     <mkdir dir="${destdir}" />
     <antcall target="copy-config" />
-    <javac srcdir="${srcdir}/java" destdir="${destdir}" failonerror="true" debug="true" includeantruntime="false" encoding="utf-8" >
+    <javac srcdir="${srcdir}" destdir="${destdir}" failonerror="true" debug="true" includeantruntime="false" encoding="utf-8" >
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:deprecation" />
       <classpath refid="classpath" />
@@ -104,7 +104,7 @@
 
   <target name="copy-config" description="复制配置文件">
     <copy todir="${destdir}">
-      <fileset dir="${srcdir}/java">
+      <fileset dir="${srcdir}">
         <include name="**/*.xml" />
         <include name="**/*.properties" />
       </fileset>

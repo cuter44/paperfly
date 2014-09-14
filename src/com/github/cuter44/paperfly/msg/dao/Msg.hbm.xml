@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.github.cuter44.paperfly.msg.dao.Msg" table="msg_msg">
+        <id	name="id" type="long">
+            <generator class="identity"/>
+        </id>
+        <property name="f" type="long" not-null="true"/>
+        <property name="t" type="long" not-null="true" index="idx_msg_t" />
+
+        <property name="c" type="string" />
+        <property name="m" type="timestamp" />
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.github.cuter44.paperfly.msg.dao.UnreadMsg" table="msg_unread_msg">
+        <id	name="id" type="long">
+            <generator class="foreign">
+                <param name="property">msg</param>
+            </generator>
+        </id>
+        <one-to-one name="msg" class="com.github.cuter44.paperfly.msg.dao.Msg" />
+    </class>
+</hibernate-mapping>
